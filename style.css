@@ -143,7 +143,6 @@ nav a {
 .accueil-introduction {
   display: flex;
   flex-direction: row;
-  width: 50%;
   align-items: center;
   margin: auto;
 }
