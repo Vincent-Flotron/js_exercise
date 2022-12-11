@@ -11,10 +11,6 @@
     <header>
         <nav>
             <img src="images/logo_small.png" alt="Logo" >
-            <div>
-                <a href="index.html">Accueil</a>
-                <a href="a-propos.html">À propos</a>
-            </div>
         </nav>
     </header>
     <main>
@@ -26,14 +22,16 @@
                 </p>
             </div>
         </section>
-        <section class="accueil-dragndrop">
+        <section id="holder" class="accueil-dragndrop">
             <h2>Place to DragNDrop</h2>
             <div>
                 <p>Drag And Drop Here</p>
+                <p></p>
+                <p id="status">File API &amp; FileReader API not supported</p>
             </div>
         </section>
         <section class="accueil-logs">
-            <button onclick="add_a_line()">Click me to add a line</button>
+            <!-- <button onclick="add_a_line()">Click me to add a line</button> -->
             <h2>Logs</h2>
             <div id="logs">
             </div>
