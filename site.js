@@ -34,6 +34,8 @@ holder.ondrop = function (e) {
     // Open and read all the file
     Print("Read the input file \"" + file.name + "\".")
 
+    let outputpath = "Output.txt";
+
     // Print(reader.result);
     reader.readAsText(file);
 
@@ -44,33 +46,29 @@ holder.ondrop = function (e) {
         else{
             /* (2) */
             let strt = new Date();  // to measure the time
-            // Measure the time used for the step 2
-            sleep(1567).then(() => {              
-                let dt = Math.abs((new Date()) - strt);
-                Print("Start measuring the time at " + datetime_from(strt) + ".");
-                Print("Stop measuring the time. dt: " + millisecs_to_hhMMss(dt));
+            Print("Start measuring the time at " + datetime_from(strt) + ".");
+            
+            // Extract the datas from the input file
+            Print("Extract the datas.");
+            let matches = ExtractDatasFromString(reader.result);
 
-                // Extract the datas from the input file
-                Print("Extract the datas.");
-                let matches = ExtractDatasFromString(reader.result);
-
-                // Reshape the datas
-                Print("Reshape.");
-                let values = ReshapeDatas(matches);
-
-
-                // Sort the datas
-                Print("Sort.");
-                values.sort();
-                values.reverse();
-
-                // // Measure the time used for the step 2
-                // let dt = Math.abs((new Date()) - strt);
-                // Print("Stop measuring the time. dt: " + millisecs_to_hhMMss(dt));
-                
-                /* (3, 4) */
-                // Write the ouptut file
-            });
+            // Reshape the datas
+            Print("Reshape.");
+            let values = ReshapeDatas(matches);
+            
+            // Sort the datas
+            Print("Sort.");
+            values.sort();
+            values.reverse();
+            
+            // Measure the time used for the step 2         
+            let dt = Math.abs((new Date()) - strt);
+            Print("Stop measuring the time. dt: " + millisecs_to_hhMMss(dt));
+   
+            /* (3, 4) */
+            // Write the ouptut file
+            Print("Write the output file \"" + outputpath + "\".");
+            WriteFile(outputpath, values, dt);
         }
     };
 
@@ -82,6 +80,9 @@ holder.ondrop = function (e) {
 //#################################################################################################
 // Functions
 //#############################################################################################
+/* Sleep function
+*   Usage:
+*       sleep(time_in_ms).then(() => { your code ...  });   */         
 function sleep(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
 }
@@ -100,6 +101,25 @@ function ExtractDatasFromString(content){
     return matches;
 }
 
+function WriteFile(filename, values, dt){
+    let time_cost = millisecs_to_hhMMss(dt);
+
+    let all_txt = "Zeit " + time_cost + "\r\n";
+    for(line of values){
+        all_txt += line + "\r\n";
+    }
+    download(filename, all_txt);
+    // var content = "What's up , hello world";
+    // // any kind of extension (.txt,.cpp,.cs,.bat)
+    // var filename = filename;
+    
+    // var blob = new Blob([content], {
+    //  type: "text/plain;charset=utf-8"
+    // });
+    
+    // saveAs(blob, filename);
+}
+
 function ReshapeDatas(matches){
     let values = [];
     
@@ -108,6 +128,19 @@ function ReshapeDatas(matches){
     }
     return values;
 }
+
+function download(filename, text) {
+    var element = document.createElement('a');
+    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+    element.setAttribute('download', filename);
+  
+    element.style.display = 'none';
+    document.body.appendChild(element);
+  
+    element.click();
+  
+    document.body.removeChild(element);
+  }
 
 // Sleep
 function sleep(ms) {
