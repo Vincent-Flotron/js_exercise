@@ -1,35 +1,6 @@
-// DISPLAY
-function greet() {
-    console.log('Hey there clicker!');
-}
-
-function add_a_line(line) {
-    document.getElementById("logs").innerHTML += "<p class=\"log-line\">" + line + "</p>";
-}
-
-function Print(message){
-    add_a_line(datetime_now() + ": " + message);
-}
-
-// DATE
-function datetime_now(){
-    let current = new Date();
-    let curr_date = pad(current.getFullYear(), 4) + '-' + pad2((current.getMonth() + 1)) + '-' + pad2(current.getDate());
-    let curr_time = pad2(current.getHours()) + ":" + pad2(current.getMinutes()) + ":" + pad2(current.getSeconds()) + "." + pad(current.getMilliseconds(), 4);
-    let datetime = curr_date + ' ' + curr_time;
-
-    return datetime;
-}
-
-// PAD
-function pad2(nb){
-    return pad(nb, 2);
-}
-
-function pad(nb, leading_zeros_nb){
-    return ("0000" + nb).substr(-leading_zeros_nb,leading_zeros_nb);
-}
-
+//#################################################################################################
+// Main
+//#############################################################################################
 // DRAG AND DROP
 var holder = document.getElementById('holder'),
     state = document.getElementById('status');
@@ -65,17 +36,84 @@ holder.ondrop = function (e) {
 
     // Print(reader.result);
     reader.readAsText(file);
-    
+
     reader.onloadend = () => {
         if(reader.result == null){
             Print("Error when reading the file \"" + file.name + "\"");
         }
+        else{
+            /* (2) */
+            let strt = new Date();  // to measure the time
+            Print("Start measuring the time at " + datetime_from(strt) + ".");
+
+            // Extract the datas from the input file
+            Print("Extract the datas.");
+            let matches = ExtractDatasFromString(reader.result);
+
+            // Reshape the datas
+            Print("Reshape.");
+            let values = ReshapeDatas(matches);
+
+
+            // Sort the datas
+
+        }
     };
 
-    /* (2) */
 
-    
     
     return false;
 };
 
+//#################################################################################################
+// Functions
+//#############################################################################################
+function Print(message){
+    add_a_line(datetime_now() + ": " + message);
+}
+
+function ExtractDatasFromString(content){
+    // const reg = /"(?:\"PA)(?<postnb>\\d+?)(?::proALPHA:)(?<nb>[^\":\\r\\n]+)(?:\")"/gi;
+    // const reg = /(?:"PA)(\d+?)(?::proALPHA:)([^":\r\n]+)(?:")/gi;
+    // const reg = /(?::proALPHA:)([^":\r\n]+)(?:")/gi;
+    const reg = /(?:"PA)(\d+?)(?::proALPHA:)([^":\r\n]+)(?:")/gi;
+    let matches = content.matchAll(reg);
+
+    return matches;
+}
+
+function ReshapeDatas(matches){
+    let values = [];
+    
+    for (const match of matches) {
+        values.push(match[2] + match[1]);
+    }
+    return values;
+}
+
+// DISPLAY
+function add_a_line(line) {
+    document.getElementById("logs").innerHTML += "<p class=\"log-line\">" + line + "</p>";
+}
+
+// Datetime
+function datetime_now(){
+    return datetime_from(new Date());
+}
+
+function datetime_from(date){
+    let curr_date = pad(date.getFullYear(), 4) + '-' + pad2((date.getMonth() + 1)) + '-' + pad2(date.getDate());
+    let curr_time = pad2(date.getHours()) + ":" + pad2(date.getMinutes()) + ":" + pad2(date.getSeconds()) + "." + pad(date.getMilliseconds(), 4);
+    let datetime = curr_date + ' ' + curr_time;
+
+    return datetime;
+}
+
+// Padding
+function pad2(nb){
+    return pad(nb, 2);
+}
+
+function pad(nb, leading_zeros_nb){
+    return ("0000" + nb).substr(-leading_zeros_nb,leading_zeros_nb);
+}
