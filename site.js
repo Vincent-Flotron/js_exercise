@@ -44,19 +44,33 @@ holder.ondrop = function (e) {
         else{
             /* (2) */
             let strt = new Date();  // to measure the time
-            Print("Start measuring the time at " + datetime_from(strt) + ".");
+            // Measure the time used for the step 2
+            sleep(1567).then(() => {              
+                let dt = Math.abs((new Date()) - strt);
+                Print("Start measuring the time at " + datetime_from(strt) + ".");
+                Print("Stop measuring the time. dt: " + millisecs_to_hhMMss(dt));
 
-            // Extract the datas from the input file
-            Print("Extract the datas.");
-            let matches = ExtractDatasFromString(reader.result);
+                // Extract the datas from the input file
+                Print("Extract the datas.");
+                let matches = ExtractDatasFromString(reader.result);
 
-            // Reshape the datas
-            Print("Reshape.");
-            let values = ReshapeDatas(matches);
+                // Reshape the datas
+                Print("Reshape.");
+                let values = ReshapeDatas(matches);
 
 
-            // Sort the datas
+                // Sort the datas
+                Print("Sort.");
+                values.sort();
+                values.reverse();
 
+                // // Measure the time used for the step 2
+                // let dt = Math.abs((new Date()) - strt);
+                // Print("Stop measuring the time. dt: " + millisecs_to_hhMMss(dt));
+                
+                /* (3, 4) */
+                // Write the ouptut file
+            });
         }
     };
 
@@ -68,6 +82,10 @@ holder.ondrop = function (e) {
 //#################################################################################################
 // Functions
 //#############################################################################################
+function sleep(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 function Print(message){
     add_a_line(datetime_now() + ": " + message);
 }
@@ -91,8 +109,13 @@ function ReshapeDatas(matches){
     return values;
 }
 
+// Sleep
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+ }
+
 // DISPLAY
-function add_a_line(line) {
+function add_a_line(line){
     document.getElementById("logs").innerHTML += "<p class=\"log-line\">" + line + "</p>";
 }
 
@@ -102,18 +125,34 @@ function datetime_now(){
 }
 
 function datetime_from(date){
-    let curr_date = pad(date.getFullYear(), 4) + '-' + pad2((date.getMonth() + 1)) + '-' + pad2(date.getDate());
-    let curr_time = pad2(date.getHours()) + ":" + pad2(date.getMinutes()) + ":" + pad2(date.getSeconds()) + "." + pad(date.getMilliseconds(), 4);
+    let curr_date = pad_leading0(date.getFullYear(), 4) + '-' + pad2l((date.getMonth() + 1)) + '-' + pad2l(date.getDate());
+    let curr_time = pad2l(date.getHours()) + ":" + pad2l(date.getMinutes()) + ":" + pad2l(date.getSeconds()) + "." + pad4t(date.getMilliseconds());
     let datetime = curr_date + ' ' + curr_time;
 
     return datetime;
 }
 
-// Padding
-function pad2(nb){
-    return pad(nb, 2);
+function millisecs_to_hhMMss(milliseconds){
+    var date = new Date(milliseconds-3600*1000);
+
+    let curr_time = pad2l(date.getHours()) + ":" + pad2l(date.getMinutes()) + ":" + pad2l(date.getSeconds()) + "." + pad4t(date.getMilliseconds());
+
+    return curr_time;
 }
 
-function pad(nb, leading_zeros_nb){
+// Padding
+function pad2l(nb){
+    return pad_leading0(nb, 2);
+}
+
+function pad_leading0(nb, leading_zeros_nb){
     return ("0000" + nb).substr(-leading_zeros_nb,leading_zeros_nb);
+}
+
+function pad4t(nb){
+    return pad_trailing0(nb, 4);
+}
+
+function pad_trailing0(nb, trailing_zeros_nb){
+    return (nb + "0000").substr(0,trailing_zeros_nb);
 }
