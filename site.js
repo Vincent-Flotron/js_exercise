@@ -45,28 +45,25 @@ if (typeof window.FileReader === 'undefined') {
 var innerdiv = document.createElement('p');
 holder.appendChild(innerdiv);
 
-var reader;
-
-holder.ondragover = function () { this.classList.add('hover'); return false; };
-holder.ondragend = function () { this.classList.remove('hover'); return false; };
+holder.ondragover = function () { holder.classList.add('hover'); return false; };
+holder.ondragend = function () { holder.classList.remove('hover'); return false; };
 holder.ondrop = function (e) {
-    this.className = '';
+    // 
+    holder.classList.remove('hover');
     e.preventDefault();
 
-    var file = e.dataTransfer.files[0];
-    reader = new FileReader();
+    var file = e.dataTransfer.files[0],
+        reader = new FileReader();
     reader.onload = function (event) {
-        // console.log(event.target);
-
-        // innerdiv.innerText = event.target.result;
         innerdiv.innerText = "file \"" + file.name + "\" received.";
-
-        // holder.style.background = 'url(' + event.target.result + ') no-repeat center';
     };
-    Print("file \"" + file.name + "\" received.");
-    // reader.readAsDataURL(file);
-    // var txt = FileReader.readAsText(file)
-    Print(reader.result);
+    Print("Started.");
+
+    /* (1) */
+    // Open and read all the file
+    Print("Read the input file \"" + file.name + "\".")
+
+    // Print(reader.result);
     reader.readAsText(file);
     
     reader.onloadend = () => {
@@ -74,6 +71,9 @@ holder.ondrop = function (e) {
             Print("Error when reading the file \"" + file.name + "\"");
         }
     };
+
+    /* (2) */
+
     
     
     return false;

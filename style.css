@@ -130,6 +130,16 @@ nav a {
   color: #448042;
 }
 
+#holder {
+  border-style: dashed;
+  border-width: 15px;
+  border-color: #a5b4fc;
+}
+
+#holder.hover {
+  border-color: #e20101;
+}
+
 .accueil-introduction {
   display: flex;
   flex-direction: row;
